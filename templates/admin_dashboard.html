@@ -1,0 +1,183 @@
+{% extends 'admin_base.html' %}
+{% load static %}
+{% block title %}Dashboard{% endblock %}
+{% block customestyle %}
+{% endblock %}
+{% block body %}
+    <main id="main">
+        <span class="material-icons toggleSidebar" onclick="toggleSidebar()" id=toggleSidebar>get_app</span>
+        <div class="searchContainer">
+            <i class="material-icons">search</i>
+            <input class="searchBox" type="text" name="search" placeholder='Search for Company name ...' id="searchBox" onkeyup="myFunction()">
+            <input type="submit" value="Search" class="searchButton" onclick="doSearch()">
+        </div>
+        <div id="dashboardContainer">
+            <div id="dashboard" class="">
+                <!-- Dashboard Headers -->
+                <div id="headingRow" class="w3-row">
+                    <div class="w3-col l2 headingRowItem"><b>Company Name</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>First Name</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>Email</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>Registration Date</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>Status</b></div>
+                    <div class="w3-col l2 headingRowItem"></div>
+                </div>
+                <!-- Dashboard - User Data -->
+                {% for report in reports %}
+                <!-- User Data - Data Row -->
+                <div class="userRow w3-row">
+                    <div class="w3-col l2">{{report.companyName}}</div>
+                    <div class="w3-col l2">{{report.user.first_name}}
+                        {% if not report.user.first_name %}
+                            &nbsp;
+                        {% endif %}
+                    </div>
+                    <div class="w3-col l2">{{report.user.email}}</div>
+                    <div class="w3-col l2">{{report.created_at|date:'m/d/Y H:i:s'}}</div>
+                    <div class="w3-col l2">{{report.status}}</div>
+                    <div class="w3-col l2">
+                        <!-- <button class="w3-button actionIcon"><span class="material-icons eyeIcon">visibility</span></button> -->
+                        {% if report.status == 'Queued' %}
+                        <button class="w3-button actionIcon" onclick=runReport({{report.id}},{{1}})><span class="material-icons workIcon">work</span></button>
+                        {% else %}
+                        <button class="w3-button actionIcon" disabled><span class="material-icons workIcon">work</span></button>
+                        {% endif %}
+
+                        {% if report.status == 'Queued' %}
+                        <button class="w3-button actionIcon" onclick=runReport({{report.id}},{{0}})><span
+                                class="material-icons workOffIcon">work_off</span></button>
+                        {% else %}
+                        <button class="w3-button actionIcon" disabled><span class="material-icons workOffIcon">work_off</span></button>
+                        {% endif %}
+
+
+
+                        {% if report.status == 'Completed' %}
+                        <button class="w3-button actionIcon">
+                            <a href="/download/{{report.fileName}}">
+                        {% else %}
+                        <button class="w3-button actionIcon" disabled>
+                            <a href="#">
+                        {% endif %}
+                                <span class="material-icons downloadIcon">cloud_download</span>
+                            </a></button>
+                        <button class="w3-button actionIcon" onclick="showWarningMsg({{report.id}})"><span class="material-icons trashIcon">delete</span></button>
+                        <button class="w3-button actionIcon" onclick="refreshReport({{report.id}})"><span class="material-icons refreshIcon">refresh</span></button>
+                        <button class="w3-button actionIcon" onclick="connectQB({{report.id}})"><img src="{% static 'images\qb.png' %}" width="20px"/></button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Pagination-->
+        <div class="w3-bar" id="pagination">
+            {% if reports.has_previous %}
+                <a href="?page={{ reports.previous_page_number }}" class="w3-button">&laquo;</a>
+            {% else %}
+                <a href="#" class="w3-button disabled" >&laquo;</a>
+                <!-- style="display: none;" -->
+            {% endif %}
+
+            {% for i in pagerange %}
+                {% if reports.number == i %}
+                <a href="#" class="w3-button active">{{i}}</a>
+                {% else %}
+                <a href="?page={{ i }}" class="w3-button">{{i}}</a>
+                {% endif %}
+            {% endfor %}
+            {% if reports.has_next %}
+                <a href="?page={{ reports.next_page_number }}" class="w3-button">&raquo;</a>
+            {% else %}
+                <a href="#" class="w3-button disabled" >&raquo;</a>
+            {% endif %}
+        </div>
+    </main>
+    <!-- Warning Msg -->
+    <div id="overlay">
+        <div id="warningMsg">
+            <div class="msgTitle">Delete User</div>
+            <div class="msgText"><span class="material-icons"
+                    style="color: rgb(221, 63, 63);position:relative;top:3px">warning</span> Are you sure you want to delete this?
+            </div>
+            <div class="popUpsBtns">
+                <button class="w3-button actionIcon cancelBtn" onclick="closeWarningMsg()">Cancel</button>
+                <button class="w3-button actionIcon confirmBtn" id="confirmDelete" onclick="deleteReport(value)">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(".eyeIcon").attr('title', 'User Profile');
+        $(".workIcon").attr('title', 'Run Macro-On');
+        $(".workOffIcon").attr('title', 'Run Macro-Off');
+        $(".downloadIcon").attr('title', 'Download Result');
+        $(".trashIcon").attr('title', 'Delete Request');
+        $(".refreshIcon").attr('title', 'Reset Status');
+        function showWarningMsg(reportId) {
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("confirmDelete").value = reportId;
+        }
+
+        function closeWarningMsg() {
+            hideElement('overlay');
+            // document.getElementById("overlay").style.display = "none";
+        }
+
+        function deleteReport(value) {
+            // console.log('[SPIDER] [value]', value);
+            hideElement('overlay');
+            window.location.replace("{% url 'reportDelete' reportId=123 %}".replace(/123/, value));
+        }
+        function runReport(value, runMacro) {
+            window.location.replace("{% url 'reportRun' reportId=123 runMacro=234 %}".replace(/123/, value).replace(/234/, runMacro));
+        }
+        function refreshReport(value) {
+            window.location.replace("{% url 'reportRefresh' reportId=123 %}".replace(/123/, value));
+        }
+        function connectQB(value) {
+            launchPopup("/sampleAppOAuth2/connectToQuickbooks2/"+value+"/")
+        }
+    </script>
+    <script>
+        if (window.opener) {
+            window.opener.location.href = '/adminapp/'
+            window.close()
+        }
+    </script>
+    <script>
+        function launchPopup(path) {
+            var win;
+            var checkConnect;
+            var parameters = "location=1,width=800,height=650";
+            parameters += ",left=" + (screen.width - 800) / 2 + ",top=" + (screen.height - 650) / 2;
+
+            // Launch Popup
+            win = window.open(path, 'connectPopup', parameters);
+        }
+    </script>
+    <script>
+        function myFunction() {
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("searchBox");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("dashboardContainer");
+            tr = table.getElementsByClassName("userRow");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("div")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+        function doSearch() {
+            var companyName = document.getElementById("searchBox").value;
+            console.log('[SPIDER] [CompanyName]', companyName);
+            window.location.replace("{% url 'adminDashboard' %}?companyName="+companyName);
+        }
+    </script>
+
+{% endblock %}

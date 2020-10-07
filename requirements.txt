@@ -1,0 +1,10 @@
+Django==3.0.6
+mysqlclient
+python_jose==2.0.2
+requests==2.20.0
+jose==1.0.0
+xlwings==0.19.2
+django_mysql
+django-sendgrid-v5
+cryptography
+pywin32

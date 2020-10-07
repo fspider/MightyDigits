@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% block title %}Input{% endblock %}
+
+{% block customestyle %}
+    <style>
+        /* create a new arrow, because we are going to mess up the native one
+see "List of symbols" below if you want another, you could also try to add a font-awesome icon.. */
+        
+        .after {
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            background-color: #24343c;
+            color: #fff;
+            padding: 11.02px;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+            left: -18px;
+            top: 1.4px;
+        }
+        
+        .before {
+            font-family: "Arial";
+            font-weight: 600;
+            background-color: #24343c;
+            color: #fff;
+            padding: 12px;
+            margin-right: 8px;
+            border-radius: 8px 0 0 8px;
+            font-size: 12px;
+        }
+        /* change color of symbol on hover */
+        /*
+input[type="month"]:hover:after {
+    color: #85b341;
+}
+/* make the native arrow invisible and stretch it over the whole field so you can click anywhere in the input field to trigger the native monthpicker*/
+        /*
+        input[type="month"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: auto;
+            height: auto;
+            color: transparent;
+            background: transparent;
+        }
+        /* adjust increase/decrease button */
+        /*
+        input[type="month"]::-webkit-inner-spin-button {
+            z-index: 1;
+        }
+        /* adjust clear button */
+        /*
+        input[type="month"]::-webkit-clear-button {
+            z-index: 1;
+        }
+        */
+        
+        .formWindow {
+            width: 400px;
+            padding: 0 36px;
+        }
+        
+        .formContainer {
+            position: relative;
+            top: 75px;
+        }
+        
+        h2 {
+            margin-bottom: 32px;
+        }
+        
+        input {
+            width: 150px;
+            font-size: 12px;
+            height: 37.3px;
+            padding: 0 0 0 0px;
+            border-radius: 0px;
+            margin-top: 16px;
+            display: inline;
+            text-align: center;
+            border: 0;
+            position: relative;
+            left: -13px;
+            top: 0.5px;
+        }
+        
+        .formBtns {
+            margin-top: 70px;
+        }
+        .ui-datepicker-calendar {
+                display: none;
+        }
+        .ui-datepicker-current
+        { display: none; }
+
+        /* Alert Message */
+        .alert {
+            padding: 2px;
+            background-color: #ff9800;
+            color: white;
+            margin-top: 11px;
+            border-radius: 8px;
+            position: absolute;
+        }
+
+        .closebtn {
+            margin-left: 15px;
+            color: white;
+            font-weight: bold;
+            float: right;
+            font-size: 22px;
+            line-height: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .closebtn:hover {
+            color: black;
+        }
+</style>
+
+{% endblock %}
+{% block body %}
+    <div class="formWindow w3-card">
+        <a href="/" class="icon-block">
+            <i class="fa fa-close closeBtn"></i>
+        </a>
+        <div class="formContainer">
+            <h2><b>When would you like your financial model to start and end?</b></h2>
+            <form action="{% url 'doInputStartEndDate' %}" method="post" onsubmit="return validateForm()" name="startEndDateForm">
+                {% csrf_token %}
+                <div>
+                    <span class="before">Start Date</span>
+                    <input class="input-card date-picker" type="text" id="startDate" name="startDate" placeholder="mm/yyyy" autocomplete="off" required>
+                    <span class="after"><i class="far fa-calendar-alt"></i></span>
+                </div>
+                <div>
+                    <span class="before">End Date</span>
+                    <input class="input-card date-picker" type="text" id="endDate" name="endDate" placeholder="mm/yyyy"  autocomplete="off" required>
+                    <span class="after"><i class="far fa-calendar-alt"></i></span>
+                </div>
+                <div class="alert" id="alert" style="display:none;">
+                    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+                    Please select a range with a maximum 10 year period
+                </div>
+                <p class="formBtns">
+                    <a href="{% url 'inputAccountingBasis' %}" class="backBtn" type="">Back</a>
+                    <button class="submitBtn" type="submit">Next <i class='fas fa-long-arrow-alt-right'></i></button>
+                </p>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $(function() {
+                var dateToday = new Date();
+                $('.date-picker').datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    dateFormat: 'MM yy',
+                    onClose: function(dateText, inst) {
+                        $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+                    },
+                });
+                $(".datepicker").attr("autocomplete", "off");
+            });
+        });
+
+        function validateForm() {
+            var start = document.forms["startEndDateForm"]["startDate"].value;
+            var end = document.forms["startEndDateForm"]["endDate"].value
+            year_diff = end.substr(-4) - start.substr(-4);
+            if(year_diff >= 10) {
+                document.getElementById("alert").style.display = "block";
+                return false;
+            }
+            return true;
+        }
+</script>
+{% endblock %}

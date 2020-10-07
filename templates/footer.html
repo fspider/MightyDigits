@@ -1,0 +1,57 @@
+<!-- Logout Msg -->
+<div class="overlay" id="logOutMsg">
+    <div class="warningMsg">
+        <div class="msgTitle">Logout</div>
+        <div class="msgText">Are you sure you want to Logout?</div>
+        <div class="popUpsBtns">
+            <button class="w3-button actionIcon cancelBtn" onclick="hideElement('logOutMsg')">Cancel</button>
+            <button class="w3-button actionIcon confirmBtn" onclick="userlogout()">Confirm</button>
+        </div>
+    </div>
+</div>
+<div id="blackBg"></div>
+
+    <script>
+        function showElement(elem) {
+            document.getElementById(elem).style.display = "block";
+        }
+
+        function hideElement(elem) {
+            document.getElementById(elem).style.display = "none";
+        }
+
+        function showHideElement(elem) {
+            var x = document.getElementById(elem);
+            if (x.style.display === 'none') {
+                x.style.display = 'block';
+            } else {
+                x.style.display = 'none';
+            }
+        }
+        let hidden = true
+
+        function toggleSidebar() {
+
+            let sidebar = document.getElementById("platformSidebar");
+            let blackBg = document.getElementById("blackBg");
+            let toggle = document.getElementById('toggleSidebar')
+            if (hidden) {
+                blackBg.style.display = "block"
+                sidebar.style.display = "block"
+                toggle.style.marginLeft = "calc(80% + 8px)"
+                toggle.style.transform = "rotate(90deg)"
+                hidden = false
+            } else {
+                blackBg.style.display = "none"
+                sidebar.style.display = "none"
+                toggle.style.marginLeft = "8px"
+                toggle.style.transform = "rotate(-90deg)"
+                hidden = true
+            }
+        }
+
+        function userlogout() {
+            hideElement('logOutMsg');
+            window.location.replace("{% url 'logout' %}");
+        }
+    </script>

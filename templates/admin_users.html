@@ -1,0 +1,266 @@
+{% extends 'admin_base.html' %}
+{% block title %}Users{% endblock %}
+{% block customestyle %}
+{% endblock %}
+{% block body %}
+    <main id="main">
+        <span class="material-icons toggleSidebar" onclick="toggleSidebar()" id=toggleSidebar>get_app</span>
+        <div class="searchContainer">
+            <i class="material-icons">search</i>
+            <input class="searchBox" type="text" name="search" placeholder='Search for User Name ...' id="searchBox" onkeyup="myFunction()">
+            <input type="submit" value="Search" class="searchButton" onclick="doSearch()">
+
+        </div>
+        <div id="dashboardContainer">
+            <div id="dashboard" class="">
+                <!-- manageUsers Headers -->
+                <div id="headingRow" class="w3-row">
+                    <!-- <div class="w3-col l2 headingRowItem"><b>Company Name</b></div> -->
+                    <div class="w3-col l3 headingRowItem"><b>First Name</b></div>
+                    <div class="w3-col l3 headingRowItem"><b>Email</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>Registration Date</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>Last Login Date</b></div>
+                    <div class="w3-col l2 headingRowItem"><span class="addUser" onclick="showElement('addUser')">+ Add User</span></div>
+                </div>
+                <!-- manageUsers - User Data -->
+                {% for user in users %}
+                <!-- User Data - Data Row -->
+                <div class="userRow w3-row">
+                    <!-- <div class="w3-col l2">Company 1</div> -->
+                    <div class="w3-col l3">{{user.first_name}}
+                        {% if not report.user.first_name %}
+                            &nbsp;
+                        {% endif %}
+                    </div>
+                    <div class="w3-col l3">{{user.email}}</div>
+                    <div class="w3-col l2">{{user.date_joined|date:'m/d/Y H:i:s'}}</div>
+                    {% if user.last_login is None %}
+                    <div class="w3-col l2"> &nbsp; </div>
+                    {% else %}
+                    <div class="w3-col l2">{{user.last_login|date:'m/d/Y H:i:s'}}</div>
+                    {% endif %}
+                    <div class="w3-col l2">
+                        <button class="w3-button actionIcon" title="Change Permissions" onclick="showChangePermission({{user.id}})"><span class="material-icons">settings</span></button>
+                        <button class="w3-button actionIcon" onclick="showChangePassword({{user.id}})" title="Reset Password"><span class="material-icons">vpn_key</span></button>
+                        <button class="w3-button actionIcon" onclick="showChangeActive({{user.id}})" title="Lock Account"><span class="material-icons">lock</span></button>
+                        <button class="w3-button actionIcon" onclick="showDeleteMsg({{user.id}})" title="Delete Account"><span class="material-icons">delete</span></button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Pagination-->
+        <div class="w3-bar" id="pagination">
+            {% if users.has_previous %}
+            <a href="?page={{ users.previous_page_number }}" class="w3-button">&laquo;</a>
+            {% else %}
+            <a href="#" class="w3-button disabled">&laquo;</a>
+            <!-- style="display: none;" -->
+            {% endif %}
+
+            {% for i in pagerange %}
+            {% if users.number == i %}
+            <a href="#" class="w3-button active">{{i}}</a>
+            {% else %}
+            <a href="?page={{ i }}" class="w3-button">{{i}}</a>
+            {% endif %}
+            {% endfor %}
+            {% if users.has_next %}
+            <a href="?page={{ users.next_page_number }}" class="w3-button">&raquo;</a>
+            {% else %}
+            <a href="#" class="w3-button disabled">&raquo;</a>
+            {% endif %}
+        </div>
+    </main>
+    <!-- Warning delete Msg -->
+    <div class="overlay" id="warningMsgs">
+        <div class="warningMsg">
+            <div class="msgTitle">Delete User</div>
+            <div class="msgText"><span class="material-icons" style="color: rgb(221, 63, 63);position:relative;top:3px">warning</span> Are you sure you want to delete this?</div>
+            <div class="popUpsBtns">
+                <button type="button" class="w3-button actionIcon cancelBtn" onclick="hideElement('warningMsgs')">Cancel</button>
+                <button type="button" class="w3-button actionIcon confirmBtn" id="confirmDelete" onclick="deleteUser(value)">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <!-- Add user Msg -->
+    <div class="overlay" id="addUser">
+        <div class="warningMsg">
+            <div class="msgTitle">Add User</div>
+            <form>
+                <input class="w3-input" type="text" placeholder="First Name" id="newUserName">
+                <input class="w3-input" type="text" placeholder="Email" id="newEmail">
+                <div style="margin-top: 32px;">
+                    <input type="radio" name="newUserPermissions" id="newUserBasic"> <label for="newUserBasic" style="margin-right: 16px;">Basic</label>
+                    <input type="radio" name="newUserPermissions" id="newUserAdmin"> <label for="newUserAdmin">Admin</label>
+                </div>
+                <div class="popUpsBtns">
+                    <button type="button" class="w3-button actionIcon cancelBtn" onclick="hideElement('addUser')">Cancel</button>
+                    <button type="button" class="w3-button actionIcon confirmBtn" onclick="addNewUser()">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Change Permission Msg -->
+    <div class="overlay" id="changePermissions">
+        <div class="warningMsg">
+            <div class="msgTitle">Change Permissions</div>
+            <div class="msgText"><span class="material-icons" style="color: rgb(221, 63, 63);position:relative;top:3px;">warning</span> Change Permissions for this?</div>
+            <form>
+                <div style="text-align:center;margin-top: 32px;">
+                    <input type="radio" name="permissions" id="changePermissionBasic"> <label for="basic" style="margin-right: 32px;">Basic</label>
+                    <input type="radio" name="permissions" id="changePermissionAdmin"> <label for="admin">Admin</label>
+                </div>
+                <div class="popUpsBtns">
+                    <button type="button" class="w3-button actionIcon cancelBtn" onclick="hideElement('changePermissions')">Cancel</button>
+                    <button type="button" class="w3-button actionIcon confirmBtn" id="confirmChangePermission" onclick="changePermissionUser(value)">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- Add Password Msg -->
+    <div class="overlay" id="changePassword">
+        <div class="warningMsg">
+            <div class="msgTitle">Change Password</div>
+            <form>
+                <input class="w3-input" type="password" placeholder="New Password" id="newPassword">
+                <input class="w3-input" type="password" placeholder="Confirm Password" id="confirmPassword">
+                <div class="popUpsBtns">
+                    <button type="button" class="w3-button actionIcon cancelBtn"
+                        onclick="hideElement('changePassword')">Cancel</button>
+                    <button type="button" class="w3-button actionIcon confirmBtn" id="confirmChangePassword" onclick="changePasswordUser(value)">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Change Active Msg -->
+    <div class="overlay" id="changeActive">
+        <div class="warningMsg">
+            <div class="msgTitle">Change Active</div>
+            <div class="msgText"><span class="material-icons"
+                    style="color: rgb(221, 63, 63);position:relative;top:3px;">warning</span> Change active status for this?
+            </div>
+            <form>
+                <div style="text-align:center;margin-top: 32px;">
+                    <input type="radio" name="activestatus" id="changeUnlock"> <label for="active"
+                        style="margin-right: 32px;">Unlock</label>
+                    <input type="radio" name="activestatus" id="changeLock"> <label for="deactive">Lock</label>
+                </div>
+                <div class="popUpsBtns">
+                    <button type="button" class="w3-button actionIcon cancelBtn"
+                        onclick="hideElement('changeActive')">Cancel</button>
+                    <button type="button" class="w3-button actionIcon confirmBtn" id="confirmChangeActive"
+                        onclick="changeActiveUser(value)">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function doSearch() {
+            var username = document.getElementById("searchBox").value;
+            console.log('[SPIDER] [username]', username);
+            window.location.replace("{% url 'adminUsers' %}?username=" + username);
+        }
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function emailIsValid(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+        }
+
+        // Add new User
+        function addNewUser() {
+            var username = document.getElementById("newUserName").value;
+            var email = document.getElementById("newEmail").value;
+            var isNewBasic = document.getElementById("newUserBasic").checked;
+            var isNewAdmin = document.getElementById("newUserAdmin").checked;
+
+            if (!emailIsValid(email)) return;
+            // console.log(username, email, isNewBasic, isNewAdmin);
+            $.ajax({
+                
+                url: "{% url 'addNewUser' %}",
+                data: {
+                    'username': username,
+                    'email': email,
+                    'isNewAdmin': isNewAdmin
+                },
+                dataType: 'json',
+                success: function (data) {
+                    hideElement('addUser')            
+                    window.location.replace("{% url 'adminUsers' %}");
+                    console.log('add user success ---->', data);
+                },
+                error: function(data) {
+                    console.log('add user error ------>', data);
+                }
+            });
+        }
+        // Delete User
+        function showDeleteMsg(userId) {
+            showElement('warningMsgs')
+            document.getElementById("confirmDelete").value = userId;
+        }
+        function deleteUser(userId) {
+            hideElement('warningMsgs');
+            window.location.replace("{% url 'userDelete' userId=123 %}".replace(/123/, userId));
+        }
+        // Change Permission
+        function showChangePermission(userId) {
+            showElement('changePermissions');
+            document.getElementById("confirmChangePermission").value = userId;
+        }
+        function changePermissionUser(userId) {
+            hideElement('changePermissions');
+            var isAdmin = document.getElementById("changePermissionAdmin").checked;
+            window.location.replace("{% url 'userChangePermission' userId=123 permission=234 %}".replace(/123/, userId).replace(/234/, isAdmin));
+        }
+        // Change Lock Status
+        function showChangeActive(userId) {
+            showElement('changeActive');
+            document.getElementById("confirmChangeActive").value = userId;
+        }
+        function changeActiveUser(userId) {
+            hideElement('changeActive');
+            var isActive = document.getElementById("changeUnlock").checked;
+            window.location.replace("{% url 'userChangeActive' userId=123 isActive=234 %}".replace(/123/, userId).replace(/234/, isActive));
+        }
+        // Change Password
+        function showChangePassword(userId) {
+            showElement('changePassword');
+            document.getElementById("confirmChangePassword").value = userId;
+        }
+        function changePasswordUser(userId) {
+            console.log(userId);
+            var newPassword = document.getElementById("newPassword").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+            if (newPassword.length < 6) {
+                alert('Enter at least 6 characters!');
+                return;
+            }
+            if (newPassword != confirmPassword) {
+                document.getElementById("confirmPassword").setCustomValidity('Passwords does not match.');
+                alert('Password does not match');
+                return;
+            }
+            hideElement('changePassword');
+            window.location.replace("{% url 'userChangePassword' userId=123 password=234 %}".replace(/123/, userId).replace(/234/, newPassword));
+        }
+
+    </script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% load static %}
+
+<header id="platformHeader" class="w3-top">
+    <div class="w3-bar" id="headerItemsContainer">
+        <a href="#" class="w3-bar-item">
+            <img src="{% static 'images/logo.png' %}" alt="model-wiz-logo" width="115">
+        </a>
+        <div></div>
+        <div></div>
+        <div id="profileMenu" class="w3-bar-item">
+            <img src="{% static 'images/userAvatar.svg' %}" alt="user-avatar" width="42" style="cursor: pointer;"
+                onclick="showHideElement('profileMenuDropdown')">
+            <div class=" w3-bar-block w3-card" id="profileMenuDropdown" style="display: none;">
+                <div class="w3-bar-item" style="text-align: right;">
+                    <button class="w3-button confirmBtn"
+                        onclick="showElement('logOutMsg');hideElement('profileMenuDropdown')">
+                        <span class="material-icons" style="position: relative;top:3px;font-size:16px">login</span>
+                        Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>

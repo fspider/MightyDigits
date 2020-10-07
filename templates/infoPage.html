@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% block title %}Submission{% endblock %}
+
+{% block customestyle %}
+    <style>
+        .w3-row:after,
+        .w3-row:before {
+            content: "";
+            display: table;
+            clear: both
+        }
+        
+        .w3-half,
+        .w3-third,
+        .w3-twothird,
+        .w3-threequarter,
+        .w3-quarter,
+        .infoTitle,
+        .infoDetails {
+            float: left;
+            width: 100%
+        }
+        
+        .infoDetails {
+            float: left;
+            width: 100%
+        }
+        
+        @media (min-width:840px) {
+            .w3-quarter {
+                width: 24.99999%
+            }
+            .w3-third {
+                width: 33.33333%
+            }
+            .w3-half {
+                width: 49.99999%
+            }
+            .w3-twothird {
+                width: 66.66666%
+            }
+            .w3-threequarter {
+                width: 74.99999%
+            }
+            .infoTitle {
+                width: 66.66666%;
+                padding-left: 48px
+            }
+            .infoDetails {
+                width: 33.33333%
+            }
+        }
+        
+        .w3-rest {
+            overflow: hidden
+        }
+        
+        .w3-card {
+            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12)
+        }
+        
+        #outerMain {
+            padding: 16PX 64px;
+        }
+        
+        #containerWindow {
+            width: 100%;
+            background-color: #f4f4f4;
+            color: #454545;
+            border-radius: 8PX;
+            padding: 16PX 64px;
+        }
+        
+        #header {
+            text-align: center;
+        }
+        
+        #header h2 {
+            font-size: 2rem;
+            margin: 64px auto;
+        }
+        
+        #header a {
+            color: #85b341;
+        }
+        
+        #innerInfo {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 36px auto;
+        }
+        
+        .infoRow {
+            border-bottom: 1px solid #f4f4f4;
+            padding: 16px;
+            margin: auto;
+        }
+        
+        .infoRow:last-of-type {
+            border: 0;
+        }
+        
+        .detailsRow {
+            padding: 4px;
+        }
+        
+        @media (min-width:1093px) {
+            .infoRow {
+                width: 800px;
+            }
+        }
+        
+        @media (max-width:840px) {
+            #outerMain {
+                padding: 16PX;
+            }
+            #containerWindow {
+                padding: 16px;
+            }
+            #header h2 {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div id="outerMain">
+        <div id="containerWindow" class="W3-card">
+            <header id="header">
+                <h2><b>Thanks for the details!</b></h2>
+                <p>Our team has received your information. You can expect to receive your <b>financial model</b> within 24 hours</p>
+                <p>Until then, if you have any questions / comments, please feel free to <a href="https://www.mightydigits.com/#comp-kad4y6nminlineContentParent" target="_blank">contact us</a>.</p>
+            </header>
+            <main id="innerInfo">
+                <div class="infoRow w3-row">
+                    <div class="infoTitle"><b>Company Name:</b></div>
+                    <div class="infoDetails">{{companyName}}</div>
+                </div>
+                <div class="infoRow w3-row">
+                    <div class="infoTitle"><b>Accounting Basis:</b></div>
+                    <div class="infoDetails">{{accountingBasis}}</div>
+                </div>
+                <div class="infoRow w3-row">
+                    <div class="infoTitle"><b>Model Start Date:</b></div>
+                    <div class="infoDetails">{{startDate}}</div>
+                </div>
+                <div class="infoRow w3-row">
+                    <div class="infoTitle"><b>Model End Date:</b></div>
+                    <div class="infoDetails">{{endDate}}</div>
+                </div>
+                <div class="infoRow w3-row">
+                    <div class="infoTitle"><b>last month of actualized data:</b></div>
+                    <div class="infoDetails">{{lastMonth}}</div>
+                </div>
+                <div class="infoRow w3-row">
+                    <div class="infoTitle"><b>Departments <!--make up your P&L-->:</b></div>
+                    <div class="infoDetails">
+                        {% for item in departmentsOfPL %}
+                        <div class="detailsRow">{{item}}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <!-- <div class="infoRow w3-row">
+                    <div class="infoTitle"><b>Departments make up your Headcount:</b></div>
+                    <div class="infoDetails">
+                        {% for item in departmentsOfHC %}
+                        <div class="detailsRow">{{item}}</div>
+                        {% endfor %}
+                    </div>
+                </div> -->
+                <div class="infoRow w3-row">
+                    <div class="infoTitle"><b>your staff location:</b></div>
+                    <div class="infoDetails">
+                        {% for item in staffLocation %}
+                        <div class="detailsRow">{{item}}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+{% endblock %}

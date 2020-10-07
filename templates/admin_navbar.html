@@ -1,0 +1,27 @@
+<nav class="w3-sidebar w3-animate-left" id="platformSidebar">
+    <div class="w3-bar-block manageContainer">
+        {% if active == "dashboard" %}
+        <a href="{% url 'adminDashboard' %}" class="w3-bar-item active"><i class="fas fa-database"></i> Manage Data</a>
+        {% else %}
+        <a href="{% url 'adminDashboard' %}" class="w3-bar-item"><i class="fas fa-database"></i> Manage Data</a>
+        {% endif %}
+
+        {% if active == "users" %}
+        <a href="{% url 'adminUsers' %}" class="w3-bar-item active"><i class="fas fa-users"></i> Manage Users</a>
+        {% else %}
+        <a href="{% url 'adminUsers' %}" class="w3-bar-item"><i class="fas fa-users"></i> Manage Users</a>
+        {% endif %}
+
+        {% if active == "uploadTemplate" %}
+        <a href="{% url 'uploadTemplate' %}" class="w3-bar-item active"><i class="fas fa-upload"></i> Upload Template</a>
+        {% else %}
+        <a href="{% url 'uploadTemplate' %}" class="w3-bar-item"><i class="fas fa-upload"></i> Upload Template</a>
+        {% endif %}
+
+        {% if active == "rollForward" %}
+        <a href="{% url 'rollForward' %}" class="w3-bar-item active"><i class="fas fa-retweet"></i> Roll Forward</a>
+        {% else %}
+        <a href="{% url 'rollForward' %}" class="w3-bar-item"><i class="fas fa-retweet"></i> Roll Forward</a>
+        {% endif %}
+    </div>
+</nav>

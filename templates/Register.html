@@ -1,0 +1,245 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Register</title>
+    <meta charset="UTF-8">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style id="w3.css">
+        html {
+            box-sizing: border-box
+        }
+        
+        *,
+        *:before,
+        *:after {
+            box-sizing: inherit
+        }
+        /* Extract from normalize.css by Nicolas Gallagher and Jonathan Neal git.io/normalize */
+        
+        html {
+            -ms-text-size-adjust: 100%;
+            -webkit-text-size-adjust: 100%
+        }
+        
+        body {
+            margin: 0
+        }
+        
+        article,
+        aside,
+        details,
+        figcaption,
+        figure,
+        footer,
+        header,
+        main,
+        menu,
+        nav,
+        section {
+            display: block
+        }
+        
+        a {
+            background-color: transparent
+        }
+        
+        a:active,
+        a:hover {
+            outline-width: 0
+        }
+        
+        b,
+        strong {
+            font-weight: bolder
+        }
+        
+        hr {
+            box-sizing: content-box;
+            height: 0;
+            overflow: visible
+        }
+        
+        button,
+        input {
+            font: inherit;
+            margin: 0
+        }
+        
+        button,
+        input {
+            overflow: visible
+        }
+        
+        button,
+        select {
+            text-transform: none
+        }
+        
+        button,
+        [type=button],
+        [type=reset],
+        [type=submit] {
+            -webkit-appearance: button
+        }
+        
+        button::-moz-focus-inner,
+        [type=button]::-moz-focus-inner,
+        [type=reset]::-moz-focus-inner,
+        [type=submit]::-moz-focus-inner {
+            border-style: none;
+            padding: 0
+        }
+        
+        button:-moz-focusring,
+        [type=button]:-moz-focusring,
+        [type=reset]:-moz-focusring,
+        [type=submit]:-moz-focusring {
+            outline: 1px dotted ButtonText
+        }
+        
+        [type=checkbox],
+        [type=radio] {
+            padding: 0
+        }
+        /* End extract */
+        
+        html,
+        body {
+            font-family: Verdana, sans-serif;
+            font-size: 15px;
+            line-height: 1.5
+        }
+        
+        html {
+            overflow-x: hidden
+        }
+        
+        .w3-card,
+        .w3-card-2 {
+            box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12)
+        }
+        
+        .w3-input {
+            padding: 8px;
+            display: block;
+            width: 100%
+        }
+    </style>
+    <style>
+         ::placeholder {
+            color: #ccc;
+            opacity: 1;
+            /* Firefox */
+        }
+        
+         :-ms-input-placeholder {
+            /* Internet Explorer 10-11 */
+            color: #ccc;
+        }
+        
+         ::-ms-input-placeholder {
+            /* Microsoft Edge */
+            color: #ccc;
+        }
+        
+        .windowTitle {
+            text-align: center;
+            padding-bottom: 8px;
+        }
+        
+        #registerWindow {
+            background-color: #f4f4f4;
+            color: #454545;
+            width: 400px;
+            border-radius: 8px;
+            padding: 36px 36px 64px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        @media (max-width: 601px) {
+            #registerWindow {
+                width: 94%;
+            }
+        }
+        
+        .w3-input {
+            margin-top: 16px;
+            border: 1px solid lightgray;
+            border-radius: 8px;
+        }
+        
+        .w3-input:focus {
+            outline: none;
+            border: 1px solid #85b341;
+        }
+        
+        #acceptConditionsSec {
+            margin-top: 16px;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        #acceptConditionsSec input {
+            position: relative;
+            top: 2px;
+            margin-right: 8px;
+        }
+        
+        #acceptConditionsSec a {
+            color: blue;
+        }
+        
+        .submitBtn {
+            background-color: #85b341;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .submitBtn:hover {
+            background-color: #61b341;
+        }
+        
+        #haveAccount {
+            text-align: center;
+            margin-top: 36px;
+            padding-top: 16px;
+            font-size: 14px;
+            border-top: 1px solid #ccc;
+        }
+        
+        #haveAccount a {
+            color: #85b341;
+        }
+    </style>
+</head>
+
+<body>
+    <section id="outerContainer">
+        <main id="registerWindow" class="w3-card">
+            <div class="windowTitle">
+                <h1>Register</h1>
+            </div>
+        <form method="POST">
+            {% csrf_token %}
+                {{form.first_name}}
+                {{form.email}}
+                {{form.password}}
+                {{form.confirmPassword}}
+                {{form.errors}}
+                <div id="acceptConditionsSec">
+                    <input type="checkbox" name="acceptConditions" id="acceptConditions" required><label for="acceptConditions">I agree to the <a href="https://www.mightydigits.com/terms-and-conditions">Terms of Use</a> and <a href="https://www.mightydigits.com/privacy-policy">Privacy Policy</a>.</label>
+                </div>
+                <input class="w3-input submitBtn" type="submit" name="submit" value="Register">
+            </form>
+            <div id="haveAccount">Already have an account? <a href="{% url 'login' %}"><b>Log in</b></a>.</div>
+        </main>
+    </section>
+</body>
+
+</html>

@@ -1,0 +1,246 @@
+{% extends 'admin_base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block customestyle %}
+<style>
+    .after {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        background-color: #24343c;
+        color: #fff;
+        padding: 11.02px;
+        border-radius: 0 8px 8px 0;
+        position: relative;
+        left: -20px;
+        top: 1.4px;
+        z-index:3;
+    }
+
+    .before {
+        font-family: "Arial";
+        font-weight: 600;
+        background-color: #24343c;
+        color: #fff;
+        padding: 12px;
+        margin-right: 7px;
+        border-radius: 8px 0 0 8px;
+        font-size: 12px;
+        top: 1.4px;
+        padding: 11.3px;
+    }
+    #newLastMonth {
+        width: 150px;
+        font-size: 12px;
+        height: 37.3px;
+        padding: 0 0 0 0px;
+        border-radius: 0px;
+        margin-top: 16px;
+        display: inline;
+        text-align: center;
+        border: 1;
+        position: relative;
+        left: -13px;
+        top: 0.5px;
+    }
+
+    .ui-datepicker-calendar {
+            display: none;
+    }
+    .ui-datepicker-current
+    { display: none; }
+</style>
+{% endblock %}
+{% block body %}
+    <main id="main">
+        <span class="material-icons toggleSidebar" onclick="toggleSidebar()" id=toggleSidebar>get_app</span>
+        <div class="searchContainer">
+            <i class="material-icons">search</i>
+            <input class="searchBox" type="text" name="search" placeholder='Search for Company name ...' id="searchBox" onkeyup="myFunction()">
+            <input type="submit" value="Search" class="searchButton" onclick="doSearch()">
+        </div>
+        <div id="dashboardContainer">
+            <div id="dashboard" class="">
+                <!-- Dashboard Headers -->
+                <div id="headingRow" class="w3-row">
+                    <div class="w3-col l2 headingRowItem"><b>Company Name</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>First Name</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>Email</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>Status</b></div>
+                    <div class="w3-col l2 headingRowItem"><b>New Last Month</b></div>
+                    <div class="w3-col l2 headingRowItem"></div>
+                </div>
+                <!-- Dashboard - User Data -->
+                {% for report in reports %}
+                <!-- User Data - Data Row -->
+                <div class="userRow w3-row">
+                    <div class="w3-col l2">{{report.companyName}}</div>
+                    <div class="w3-col l2">{{report.user.first_name}}
+                        {% if not report.user.first_name %}
+                            &nbsp;
+                        {% endif %}
+                    </div>
+                    <div class="w3-col l2">{{report.user.email}}</div>
+                    <div class="w3-col l2">{{report.status}}</div>
+                    <div class="w3-col l2">
+                        {% if report.rollLastMonth %}
+                        {{report.rollLastMonth}}
+                        {% else%}
+                        &nbsp;
+                        {% endif %}
+                    </div>
+                    <div class="w3-col l2">
+
+                        <button class="w3-button actionIcon" onclick=showRollForwardMsg({{report.id}})><span
+                                class="material-icons workOffIcon" title="Roll Forward">date_range</span></button>
+
+                        {% if report.rollFileName != "" and report.rollFileName %}
+                        <button class="w3-button actionIcon" title="Download">
+                            <a href="/download/{{report.rollFileName}}">
+                        {% else %}
+                        <button class="w3-button actionIcon" title="Download" disabled>
+                            <a href="#">
+                        {% endif %}
+                                <span class="material-icons downloadIcon">cloud_download</span>
+                            </a></button>
+                        <button class="w3-button actionIcon" title="Delete" onclick="showWarningMsg({{report.id}})"><span class="material-icons trashIcon">delete</span></button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Pagination-->
+        <div class="w3-bar" id="pagination">
+            {% if reports.has_previous %}
+                <a href="?page={{ reports.previous_page_number }}" class="w3-button">&laquo;</a>
+            {% else %}
+                <a href="#" class="w3-button disabled" >&laquo;</a>
+                <!-- style="display: none;" -->
+            {% endif %}
+
+            {% for i in pagerange %}
+                {% if reports.number == i %}
+                <a href="#" class="w3-button active">{{i}}</a>
+                {% else %}
+                <a href="?page={{ i }}" class="w3-button">{{i}}</a>
+                {% endif %}
+            {% endfor %}
+            {% if reports.has_next %}
+                <a href="?page={{ reports.next_page_number }}" class="w3-button">&raquo;</a>
+            {% else %}
+                <a href="#" class="w3-button disabled" >&raquo;</a>
+            {% endif %}
+        </div>
+    </main>
+    <!-- Warning Msg -->
+    <div id="overlay">
+        <div id="warningMsg">
+            <div class="msgTitle">Delete User</div>
+            <div class="msgText"><span class="material-icons"
+                    style="color: rgb(221, 63, 63);position:relative;top:3px">warning</span> Are you sure you want to delete this?
+            </div>
+            <div class="popUpsBtns">
+                <button class="w3-button actionIcon cancelBtn" onclick="closeWarningMsg()">Cancel</button>
+                <button class="w3-button actionIcon confirmBtn" id="confirmDelete" onclick="deleteReport(value)">Confirm</button>
+            </div>
+        </div>
+    </div>
+    <!-- Roll Forward Msg -->
+    <div class="overlay" id="rollForwardMsg">
+        <div class="warningMsg">
+            <div class="msgTitle">Roll Forward Input</div>
+            <div class="msgText"><span class="material-icons"
+                    style="color: rgb(221, 63, 63);position:relative;top:3px;">warning</span> Input new last month of actualized data!
+            </div>
+            <form>
+                <div style="text-align:center;margin-top: 32px;">
+                    <!-- <input type="radio" name="permissions" id="changePermissionBasic"> <label for="basic"
+                        style="margin-right: 32px;">Basic</label>
+                    <input type="radio" name="permissions" id="changePermissionAdmin"> <label for="admin">Admin</label> -->
+                    <span class="before">Date</span>
+                    <input class="input-card date-picker" type="text" id="newLastMonth" name="newLastMonth" placeholder="mm/yyyy"
+                        autocomplete="off" required>
+                    <span class="after"><i class="far fa-calendar-alt"></i></span>
+                </div>
+                <div class="popUpsBtns">
+                    <button type="button" class="w3-button actionIcon cancelBtn"
+                        onclick="closeRollForwardMsg()">Cancel</button>
+                    <button type="button" class="w3-button actionIcon confirmBtn" id="confirmRollForward"
+                        onclick="rollForward(value)">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(function () {
+                $('.date-picker').datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    showButtonPanel: true,
+                    dateFormat: 'MM yy',
+                    onClose: function (dateText, inst) {
+                        $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+                    }
+                });
+            });
+        });
+
+        function showWarningMsg(reportId) {
+            document.getElementById("overlay").style.display = "block";
+            document.getElementById("confirmDelete").value = reportId;
+        }
+
+        function closeWarningMsg() {
+            hideElement('overlay');
+            // document.getElementById("overlay").style.display = "none";
+        }
+
+        function deleteReport(value) {
+            // console.log('[SPIDER] [value]', value);
+            hideElement('overlay');
+            window.location.replace("{% url 'reportDelete' reportId=123 %}".replace(/123/, value));
+        }
+        function showRollForwardMsg(reportid) {
+            showElement('rollForwardMsg');
+            document.getElementById("confirmRollForward").value = reportid;
+        }
+        function closeRollForwardMsg() {
+            hideElement('rollForwardMsg');
+        }
+        function rollForward(value) {
+            var newLastMonth = $("#newLastMonth").datepicker().val();
+            console.log('newLastMonth', newLastMonth);
+            if(newLastMonth == "") {
+                alert('Input new last month!');
+                return;
+            }
+            window.location.replace("{% url 'runRollForward' reportId=123 newLastMonth=234 %}".replace(/123/, value).replace(/234/, newLastMonth));
+        }
+
+    </script>
+    <script>
+        function myFunction() {
+            var input, filter, table, tr, td, i;
+            input = document.getElementById("searchBox");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("dashboardContainer");
+            tr = table.getElementsByClassName("userRow");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("div")[0];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+        function doSearch() {
+            var companyName = document.getElementById("searchBox").value;
+            console.log('[SPIDER] [CompanyName]', companyName);
+            window.location.replace("{% url 'rollForward' %}?companyName="+companyName);
+        }
+    </script>
+
+{% endblock %}

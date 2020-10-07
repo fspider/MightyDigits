@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% block title %}Sign In{% endblock %}
+
+{% block customestyle %}
+<style>
+    .formWindow {
+        width: 350px
+    }
+    
+    .formContainer {
+        position: relative;
+        top: 30px;
+    }
+    
+    input {
+        width: 250px;
+        font-size: 12px;
+        height: 38px;
+        padding: 0 8px;
+        border-radius: 4px;
+        margin-bottom: 24px
+    }
+    
+    .submitBtn {
+        margin-left: 0;
+        width: 250px;
+    }
+    
+    .formBtns {
+        margin-top: 40px;
+        text-align: center;
+    }
+    
+    form {
+        text-align: left;
+    }
+    
+    label {
+        padding-left: 50px;
+        padding-bottom: 16px;
+    }
+    
+    button {
+        margin: auto;
+    }
+    .loginTitle {
+        margin-top:40px;
+        font-size: 40px;
+        font-family: "Segoe UI", Arial, sans-serif;
+    }
+</style>
+{% endblock %}
+{% block body %}
+    <div class="formWindow w3-card">
+        <div class="loginTitle"> Welcome !</div>
+        <div class="formContainer">
+            <!-- <ul class="messages">
+                {% for msg in messages %}
+                <li>
+                    <div class="alert alert-{{msg.level_tag}}" role="alert">
+                        {{msg.message}}
+                    </div>
+                </li>
+                {% endfor %}
+            </ul> -->
+            <form method="post">
+                {% csrf_token %}
+                <label for="email">Email:</label>
+                <!-- <input class="input-card" type="email" name="email" id="email" placeholder="Please, Enter your email" required> -->
+                {{form.email}}
+                <label for="password">Password:</label>
+                {{form.password}}
+                <!-- <input class="input-card" type="password" name="password" id="password" placeholder="Please, Enter your password" required> -->
+                <p class="formBtns">
+                    <button class="submitBtn" type="submit">Login</button>
+                </p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

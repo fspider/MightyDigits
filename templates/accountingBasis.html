@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block title %}Input{% endblock %}
+
+{% block customestyle %}
+    <style>
+        .formWindow {
+            width: 400px
+        }
+        
+        .formContainer {
+            position: relative;
+            top: 130px;
+        }
+        
+        select {
+            width: 260px;
+            font-size: 12px;
+            height: 38px;
+            padding: 0 8px;
+            border-radius: 4px;
+        }
+        
+        .submitBtn {
+            margin-left: 0;
+        }
+        
+        .formBtns {
+            margin-top: 80px;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="formWindow w3-card">
+        <a href="/" class="icon-block">
+            <i class="fa fa-close closeBtn"></i>
+        </a>
+        <div class="formContainer">
+            <h2><b>Are you on the Accrual Basis, or Cash Basis of Accounting?</b></h2>
+            <form action="{% url 'doInputAccountingBasis' %}" method="post">
+                {% csrf_token %}
+                <!-- <input type="text" name="companyName" id="companyName" placeholder="Please type the name of your company" required> -->
+                <select class="input-card" name="accountingBasis" id="accountingBasis">
+                    <option value="Accrual Basis" selected>Accrual Basis</option>
+                    <option value="Cash Basis">Cash Basis</option>
+                </select>
+                <p class="formBtns">
+                    <a href="{% url 'inputCompany' %}" class="backBtn" type="">Back</a>
+                    <button class="submitBtn" type="submit">Next <i class='fas fa-long-arrow-alt-right'></i></button>
+                </p>
+            </form>
+        </div>
+    </div>
+{% endblock %}

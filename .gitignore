@@ -1,0 +1,7 @@
+__pycache__/
+*.py[cod]
+public/result_*
+public/Result*
+public/*
+**/migrations/*
+.vscode/

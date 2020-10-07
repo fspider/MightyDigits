@@ -1,0 +1,226 @@
+{% extends 'admin_base.html' %}
+{% block title %}Users{% endblock %}
+{% block customestyle %}
+<style>
+
+    #uploadPanel {
+        background-color: #f4f4f4;
+        color: #454545;
+        /* width: "100%"; */
+        border-radius: 8px;
+        padding: 36px 36px 64px;
+        position: absolute;
+        left: 55%;
+        top: 53%;
+        transform: translate(-50%, -50%);        
+    }
+    .button {
+        /* margin-top: 16px; */
+        border: 1px solid lightgray;
+        border-radius: 8px;
+    }
+    .uploadButton {
+        background-color: var(--secondClr);
+        color: #fff;
+        padding: 4px 8px;
+        cursor: pointer;
+    }
+
+    .uploadButton:hover {
+        background-color: #7bb12b
+    }
+
+    input[type=file] {
+        display:none;
+    }
+
+    #filebutton {
+        width:350px;
+        border: 1px solid lightgray;
+        border-radius: 8px;
+        padding: 4px 12px 4px 4px;
+    }
+    #filebutton:focus {
+        outline: none;
+    }
+
+    .w3-row:after,
+    .w3-row:before {
+        content: "";
+        display: table;
+        clear: both
+    }
+    
+    .w3-half,
+    .w3-third,
+    .w3-twothird,
+    .w3-threequarter,
+    .w3-quarter,
+    .infoTitle,
+    .infoDetails {
+        float: left;
+        width: 100%
+    }
+    
+    .infoDetails {
+        float: left;
+        width: 100%
+    }
+    
+    @media (min-width:840px) {
+        .w3-quarter {
+            width: 24.99999%
+        }
+        .w3-third {
+            width: 33.33333%
+        }
+        .w3-half {
+            width: 49.99999%
+        }
+        .w3-twothird {
+            width: 66.66666%
+        }
+        .w3-threequarter {
+            width: 74.99999%
+        }
+        .infoTitle {
+            width: 66.66666%;
+            padding-left: 48px
+        }
+        .infoDetails {
+            width: 33.33333%
+        }
+    }
+    
+    .w3-rest {
+        overflow: hidden
+    }
+    
+    .w3-card {
+        box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.16), 0 2px 10px 0 rgba(0, 0, 0, 0.12)
+    }
+    
+    #outerMain {
+        padding: 16PX 64px;
+    }
+    
+    #containerWindow {
+        width: 100%;
+        background-color: #f4f4f4;
+        color: #454545;
+        border-radius: 8PX;
+        padding: 16PX 64px;
+    }
+    
+    #header {
+        text-align: center;
+    }
+    
+    #header h2 {
+        font-size: 2rem;
+        margin: 64px auto;
+    }
+    
+    #header a {
+        color: #85b341;
+    }
+    
+    #innerInfo {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 16px;
+        margin: 36px auto;
+    }
+    
+    .infoRow {
+        border-bottom: 1px solid #f4f4f4;
+        padding: 16px;
+        margin: auto;
+    }
+    
+    .infoRow:last-of-type {
+        border: 0;
+    }
+    
+    .detailsRow {
+        padding: 4px;
+    }
+    
+    @media (min-width:1093px) {
+        .infoRow {
+            width: 800px;
+        }
+    }
+    
+    @media (max-width:840px) {
+        #outerMain {
+            padding: 16PX;
+        }
+        #containerWindow {
+            padding: 16px;
+        }
+        #header h2 {
+            font-size: 1.7rem;
+        }
+    }
+    .wrap { 
+        white-space: pre-wrap;      /* CSS3 */   
+        white-space: -moz-pre-wrap; /* Firefox */    
+        white-space: -pre-wrap;     /* Opera <7 */   
+        white-space: -o-pre-wrap;   /* Opera 7 */    
+        word-wrap: break-word;      /* IE */
+    }
+    .templateUrl {  
+        color: #454545;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
+{% block body %}
+    <main id="uploadPanel">
+        <!-- <span class="material-icons toggleSidebar" onclick="toggleSidebar()" id=toggleSidebar>get_app</span> -->
+        <!-- <div class="searchContainer">
+            <i class="material-icons">search</i>
+            <input class="searchBox" type="text" name="search" placeholder='Search for User Name ...' id="searchBox" onkeyup="myFunction()">
+            <input type="submit" value="Search" class="searchButton" onclick="doSearch()">
+        </div> -->
+        <header id="header">
+            <h2><b>Upload a new template!</b></h2>
+        </header>
+        <div id="innerInfo">
+            <form method="post" enctype="multipart/form-data">
+            <div class="filebox" style="text-align:center;margin:40px;">
+                    {% csrf_token %}
+                    <input type="file" name="myfile" id="myfile">
+                    <input type="button" id="filebutton" value="Select your file ..." onclick="document.getElementById('myfile').click();" />
+                    <button type="submit" class="button uploadButton">Upload</button>
+
+                <!-- {% if uploaded_file_url %}
+                <p> <a href="{{ uploaded_file_url }}">{{ uploaded_file_url }}</a></p>
+                {% endif %} -->
+            </div>
+            </form>
+                <div class="infoRow w3-row">
+                    <div class="w3-half"><b>Template Name:</b></div>
+                <div class="w3-half wrap"><a href="/download/{{uploaded_file_url}}" class="templateUrl">{{ uploaded_file_url }}</a></div>
+                </div>
+                <div class="infoRow w3-row">
+                    <div class="w3-half"><b>Uploaded Time:</b></div>
+                    <div class="w3-half">{{uploaded_time|date:'m/d/Y H:i:s'}}</div>
+                </div>
+        </div>
+    </main>
+    <script>
+        $(document).ready(function () {
+            $('input[type=file]').attr('data-before', 'Select Your File');
+
+            $('input[type=file]').on('change', function (e) {
+                var filename = e.target.files[0].name;
+                // $('input[type=file]').attr('data-before', filename.substr(0, 30));
+                $('#filebutton').val(filename);
+            });
+        });
+    </script>
+    
+
+{% endblock %}

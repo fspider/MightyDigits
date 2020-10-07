@@ -1,0 +1,138 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Input</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+    <link rel="shortcut icon" href="{% static 'images/favicon.png' %}" type="image/png">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/header.css' %}" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .formWindow {
+            width: 500px;
+            padding: 0 36px;
+        }
+        
+        .formContainer {
+            position: relative;
+            top: 75px;
+        }
+        
+        h2 {
+            margin-bottom: 32px;
+        }
+        
+        input {
+            display: inline;
+            width: 195px;
+            font-size: 12px;
+            height: 38px;
+            padding: 0 8px 0 0px;
+            margin-top: 0px;
+            border-radius: 8px;
+            border: 0;
+        }
+        
+        .departments {
+            background-color: #fff;
+            border-radius: 8px;
+            width: 350px;
+            margin: auto;
+        }
+        
+        .departments .departmentsNames {
+            border-bottom: 1px solid #f4f4f4;
+        }
+        
+        .departments .departmentsNames label {
+            font-size: 12px;
+            border-right: 1px solid #f4f4f4;
+            padding: 14px;
+        }
+        
+        .departments div a {
+            font-size: 12.5px;
+            border-right: 1px solid #f4f4f4;
+            padding: 12px;
+        }
+        
+        .fa-trash-o {
+            font-size: 14px;
+        }
+        
+        .formBtns {
+            margin-top: 80px;
+        }
+    </style>
+</head>
+{% include 'header.html' %}
+<body>
+    <div class="formWindow w3-card">
+        <a href="/" class="icon-block">
+            <i class="fa fa-close closeBtn"></i>
+        </a>
+        <div class="formContainer">
+            <h2><b>Where is your staff located?</b></h2>
+            <form action="{% url 'doInputStaffLocation' %}" method="post">
+                {% csrf_token %}
+                <div class="departments ">
+                    <div class="departmentsNames ">
+                        <a href="javascript:void(0);" class="rmvBtn" style="padding:12px 9.2px"><i class="fas fa-trash"></i></a><label>Location 1</label>
+                        <input type="text" name="staffLocation" value="USA" required>
+                    </div>
+                    <div class="departmentsNames ">
+                        <a href="javascript:void(0);" class="addBtn"><i class="fas fa-plus"></i></a><label>Location 2</label>
+                        <input type="text" name="staffLocation" placeholder="Please, add a Location">
+                    </div>
+                </div>
+                <div class="formBtns ">
+                    <a href="{% url 'inputDepOfPL' %}" class="backBtn" type="">Back</a>
+                    <button class="submitBtn " type="submit ">Next <i class='fas fa-long-arrow-alt-right'></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var x = 2;
+            var maxField = 5; //Input fields increment limitation
+            var adda = $('.addBtn'); //Add a selector
+            var wrapper = $('.departments'); //Input field wrapper
+
+            //Once add a is clicked
+            $(adda).click(function() {
+                //Check maximum number of input fields
+                if (x < maxField) {
+                    x++; //Increment field counter
+                    // $(wrapper).append(' <div class="departmentsNames "><a href="javascript:void(0);" class="rmvBtn"  style="padding:12px 9.2px"><i class="fas fa-trash"></i></a><label>Location ' + (x + 1) + '</label><input type="text " name="staffLocation" placeholder=" Please, add a Location"></div>'); //Add field html
+                    // Get Value of Last Input
+                    var value = $(".departments .departmentsNames:last input:text").val();
+                    // Insert Department before last
+                    $(".departments .departmentsNames:last").before(' <div class="departmentsNames "><a href="javascript:void(0);" class="rmvBtn"  style="padding:12px 9.2px"><i class="fas fa-trash"></i></a><label>Location ' + (x - 1) + '</label><input type="text" value="' + value + '" name="staffLocation" placeholder=" Please, add a Location"></div>'); //Add field html
+                    // Set last name as empty
+                    $(".departments .departmentsNames:last input:text").val("");
+                    // Set last title as new x
+                    $(".departments .departmentsNames:last label").text("Location " + x);
+
+                    $('.formWindow').height($('.formWindow').height() + $('.departmentsNames').height())
+                }
+            });
+
+            //Once remove a is clicked
+            $(wrapper).on('click', '.rmvBtn', function(e) {
+                e.preventDefault();
+                $(this).parent('div').remove(); //Remove field html
+                x--; //Decrement field counter
+                $('.formWindow').height($('.formWindow').height() - $('.departmentsNames').height())
+            });
+        });
+    </script>
+</body>
+
+</html>

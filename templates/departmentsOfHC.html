@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% block title %}Input{% endblock %}
+{% block customestyle %}
+<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
+    <style>
+        .formWindow {
+            width: 500px;
+            padding: 0 36px;
+        }
+        
+        .formContainer {
+            position: relative;
+            top: 75px;
+        }
+        
+        h2 {
+            margin-bottom: 32px;
+        }
+        
+        input {
+            display: inline;
+            width: 195px;
+            font-size: 12px;
+            height: 38px;
+            padding: 0 8px 0 0px;
+            margin-top: 0px;
+            border-radius: 8px;
+            border: 0;
+        }
+        
+        .departments {
+            background-color: #fff;
+            border-radius: 8px;
+            width: 350px;
+            margin: auto;
+        }
+        
+        .departments .departmentsNames {
+            border-bottom: 1px solid #f4f4f4;
+        }
+        
+        .departments .departmentsNames label {
+            font-size: 12px;
+            border-right: 1px solid #f4f4f4;
+            padding: 14px;
+        }
+        
+        .departments div a {
+            font-size: 12.5px;
+            border-right: 1px solid #f4f4f4;
+            padding: 12px;
+        }
+        
+        .fa-trash-o {
+            font-size: 14px;
+        }
+        
+        .formBtns {
+            margin-top: 70px;
+        }
+    </style>
+{% endblock %}
+{% block body %}
+    <div class="formWindow w3-card">
+        <a href="/" class="icon-block">
+            <i class="fa fa-close closeBtn"></i>
+        </a>
+        <div class="formContainer">
+            <h2><b>What departments make up your Headcount?</b></h2>
+            <form action="{% url 'doInputDepOfHC' %}" method="post">
+                {% csrf_token %}
+                <div style="margin-bottom: 16px;">
+                    <input type="checkbox" name="sameDepartmentsOfPL" style="width:16px;height:16px;">
+                    <label style=" font-size: 12px;position:relative;top:-4px ">same departments as Income Statement</label>
+                </div>
+                <div class="departments ">
+                    <div class="departmentsNames ">
+                        <a href="javascript:void(0);" class="addBtn"><i class="fas fa-plus"></i></a><label>Department 1</label>
+                        <input type="text " name="departmentsOfHeadcount " placeholder="Department Name" required>
+                    </div>
+                </div>
+                <div class="formBtns ">
+                    <a href="{% url 'inputDepOfPL' %}" class="backBtn" type="">Back</a>
+                    <button class="submitBtn " type="submit ">Next <i class='fas fa-long-arrow-alt-right'></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var x = 1;
+            var maxField = 5; //Input fields increment limitation
+            var adda = $('.addBtn'); //Add a selector
+            var wrapper = $('.departments'); //Input field wrapper
+
+            //Once add a is clicked
+            $(adda).click(function() {
+                //Check maximum number of input fields
+                if (x < maxField) {
+                    x++; //Increment field counter
+                    $(wrapper).append(' <div class="departmentsNames "><a href="javascript:void(0);" class="rmvBtn" style="padding:12px 9.2px"><i class="fas fa-trash"></i></a><label>Department ' + (x) + '</label><input type="text " name="departmentsOfHeadcount " placeholder=" Department Name"></div>'); //Add field html
+                    $('.formWindow').height($('.formWindow').height() + $('.departmentsNames').height())
+                }
+            });
+
+            //Once remove a is clicked
+            $(wrapper).on('click', '.rmvBtn', function(e) {
+                e.preventDefault();
+                $(this).parent('div').remove(); //Remove field html
+                x--; //Decrement field counter
+                $('.formWindow').height($('.formWindow').height() - $('.departmentsNames').height())
+            });
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}Input{% endblock %}
+
+{% block customestyle %}
+<style>
+    .after {
+        font-family: "Font Awesome 5 Free";
+        font-weight: 900;
+        background-color: #24343c;
+        color: #fff;
+        padding: 11.02px;
+        border-radius: 0 8px 8px 0;
+        position: relative;
+        left: -18px;
+        top: 1.4px;
+    }
+
+    .before {
+        font-family: "Arial";
+        font-weight: 600;
+        background-color: #24343c;
+        color: #fff;
+        padding: 12px;
+        margin-right: 8px;
+        border-radius: 8px 0 0 8px;
+        font-size: 12px;
+    }
+
+    .formWindow {
+        width: 400px;
+        padding: 0 36px;
+    }
+
+    .formContainer {
+        position: relative;
+        top: 75px;
+    }
+
+    h2 {
+        margin-bottom: 32px;
+    }
+
+    input {
+        width: 150px;
+        font-size: 12px;
+        height: 37.3px;
+        padding: 0 0 0 0px;
+        border-radius: 0px;
+        margin-top: 16px;
+        display: inline;
+        text-align: center;
+        border: 0;
+        position: relative;
+        left: -13px;
+        top: 0.5px;
+    }
+
+    .formBtns {
+        margin-top: 70px;
+    }
+    .ui-datepicker-calendar {
+            display: none;
+    }
+    .ui-datepicker-current
+    { display: none; }
+
+</style>
+{% endblock %}
+{% block body %}
+<div class="formWindow w3-card">
+    <a href="/" class="icon-block">
+        <i class="fa fa-close closeBtn"></i>
+    </a>
+    <div class="formContainer">
+        <h2><b>What is the last month of actualized data in your accounting software?</b></h2>
+        <form action="{% url 'doInputLastMonth' %}" method="post">
+            {% csrf_token %}
+            <div>
+                <span class="before">Date</span>
+                <input class="input-card date-picker" type="text" id="lastMonth" name="lastMonth" placeholder="mm/yyyy"  autocomplete="off"
+                    required>
+                <span class="after"><i class="far fa-calendar-alt"></i></span>
+            </div>
+            <p class="formBtns">
+                <a href="{% url 'inputStartEndDate' %}" class="backBtn" type="">Back</a>
+                <button class="submitBtn" type="submit">Next <i class='fas fa-long-arrow-alt-right'></i></button>
+            </p>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(function () {
+            $('.date-picker').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'MM yy',
+                onClose: function (dateText, inst) {
+                    $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+                }
+            });
+        });
+    });
+</script>
+{% endblock %}
